@@ -4,7 +4,7 @@
 ## Contacts
 st128737@student.spbu.ru
 ## Description
-bmp image rotation
+bmp image "1.bmp" rotation
 ## Build
 make -f Makefile
 ## Run 
