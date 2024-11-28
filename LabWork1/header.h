@@ -5,8 +5,8 @@
 #define HEADER
 
 #include <iostream>
-#include <fstream>
 #include <vector>
+#include <fstream>
 #include <cstdint>
 
 #pragma pack(1)
@@ -42,5 +42,6 @@ void bmpRead(const std::string& fileName, std::vector<unsigned char>& imData, bm
 void bmpWrite(const std::string& fileName,  const std::vector<unsigned char>& imData, const bmpdata& header);
 void clockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height);
 void counterclockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height);
+void GaussFilter(std::vector<unsigned char>& imData, int width, int height);
 
 #endif
