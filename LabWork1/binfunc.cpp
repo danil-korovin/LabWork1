@@ -32,8 +32,9 @@ void clockwise_rotation(std::vector<unsigned char>& imData, int& width, int& hei
         {
             int l = (b * width + a)*3;
             int r = ((width - a - 1) * height + b)*3;
-            for (int i = 0; i < 3; ++i) {
-            	dat[r + i] = imData[l + i];
+            for (int i = 0; i < 3; ++i)
+            {
+                dat[r + i] = imData[l + i];
             }
 
         }
@@ -42,38 +43,45 @@ void clockwise_rotation(std::vector<unsigned char>& imData, int& width, int& hei
     std::swap(width, height);
 }
 
-void counterclockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height)  
-{  
+void counterclockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height)
+{
     std::vector<unsigned char> dat(imData.size());
-    for (int a = 0; a < width; ++a)  
-    {  
-        for (int b = 0; b < height; ++b)  
-        {  
+    for (int a = 0; a < width; ++a)
+    {
+        for (int b = 0; b < height; ++b)
+        {
             int l = (b * width + a)*3;
-            int r = (a * height + (height - b - 1))*3;  
-            for (int i = 0; i < 3; ++i) {
-            	dat[r + i] = imData[l + i];
+            int r = (a * height + (height - b - 1))*3;
+            for (int i = 0; i < 3; ++i)
+            {
+                dat[r + i] = imData[l + i];
             }
 
-        }  
-    }  
+        }
+    }
     imData = dat;
     std::swap(width, height);
 }
 
-void GaussFilter(std::vector<unsigned char>& imData, int width, int height) {
+void GaussFilter(std::vector<unsigned char>& imData, int width, int height)
+{
     std::vector<unsigned char> outData(imData.size());
-    int Gauss[3][3] = {
+    int Gauss[3][3] =
+    {
         {0, 1, 0},
         {1, 5, 1},
         {0, 1, 0}
     };
     int Gsum = 8;
-    for (int y = 1; y < height - 1; ++y) {
-        for (int x = 1; x < width - 1; ++x) {
+    for (int y = 1; y < height - 1; ++y)
+    {
+        for (int x = 1; x < width - 1; ++x)
+        {
             int red = 0, green = 0, blue = 0;
-            for (int a = -1; a <= 1; ++a) {
-                for (int b = -1; b <= 1; ++b) {
+            for (int a = -1; a <= 1; ++a)
+            {
+                for (int b = -1; b <= 1; ++b)
+                {
                     int pixInd = ((y + a) * width + (x + b)) * 3;
                     red += imData[pixInd] * Gauss[a + 1][b + 1];
                     green += imData[pixInd + 1] * Gauss[a + 1][b + 1];
