@@ -4,7 +4,7 @@
 ## Contacts
 st128737@student.spbu.ru
 ## Description
-bmp image "1.bmp" rotation
+Bmp image "1.bmp" rotation clockwise and counterclockwise. Using the Gauss filter for a rotated image.
 ## Build
 make -f Makefile
 ## Run 
