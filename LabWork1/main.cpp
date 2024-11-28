@@ -8,7 +8,7 @@
 int main()
 {   
     bmpdata header;
-    std::vector<unsigned char>imData;
+    std::vector<unsigned char> imData;
     bmpRead("1.bmp", imData, header);
     clockwise_rotation(imData, header.width, header.height);
     header.size = sizeof(header) + imData.size();
@@ -17,5 +17,8 @@ int main()
     counterclockwise_rotation(imData, header.width, header.height);
     header.size = sizeof(header) + imData.size();
     bmpWrite("counterclockwise_rotation.bmp", imData, header);  
+    GaussFilter(imData, header.width, header.height);
+    header.size = sizeof(header) + imData.size();
+    bmpWrite("counterclockwise_rotation_gauss.bmp", imData, header);  
     return 0;
 }
