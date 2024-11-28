@@ -1,18 +1,20 @@
-G = g++
-GFLAG = -Wall -g -std=c++11
+CXX = g++
+CXXFLAGS = -Wall -g -std=c++17
 
-all: main
+PROJECT = main
+SOURCES = main.cpp binfunc.cpp
+HEADERS = header.h
+OBJ = $(SOURCES:.cpp=.o)
 
-main: main.o binfunc.o
-	$(G) $(GFLAG) main.o binfunc.o -o main
+all: $(PROJECT)
 
-main.o: main.cpp header.h
-	$(G) $(GFLAG) -c main.cpp
+$(PROJECT): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-binfunc.o: binfunc.cpp header.h
-	$(G) $(GFLAG) -c binfunc.cpp
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o main
-cleanall:
-	rm *.o *.cpp main
+	rm -f $(OBJ) $(PROJECT)
+
+.PHONY: all clean
