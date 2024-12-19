@@ -17,22 +17,22 @@
 
 struct bmpdata
 {
-    uint16_t type; 
-    uint32_t size;  
-    uint16_t res1;
-    uint16_t res2;
-    uint32_t offset;
-    uint32_t biSize;
-    int32_t width;
-    int32_t height;
-    uint16_t planes;
-    uint16_t bitCount;
-    uint32_t compres;
-    uint32_t imBytes;
-    int32_t biX;
-    int32_t biY;
-    uint32_t colors;
-    uint32_t imcolors;
+    uint16_t type = 0x4D42; 
+    uint32_t size = 0;  
+    uint16_t res1 = 0;
+    uint16_t res2 = 0;
+    uint32_t offset = 54;
+    uint32_t biSize = 40;
+    int32_t width = 0;
+    int32_t height = 0;
+    uint16_t planes = 1;
+    uint16_t bitCount = 24;
+    uint32_t compres = 0;
+    uint32_t imBytes = 0;
+    int32_t biX = 0;
+    int32_t biY = 0;
+    uint32_t colors = 0;
+    uint32_t imcolors = 0;
 };
 
 #pragma pack(push, f)
