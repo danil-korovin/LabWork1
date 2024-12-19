@@ -9,12 +9,7 @@
 #include <fstream>
 #include <cstdint>
 
-#pragma pack(1)
-#pragma once
-
-
-#pragma pack(1)
-
+#pragma pack(push, 1)
 struct bmpdata
 {
     uint16_t type = 0x4D42; 
@@ -35,7 +30,7 @@ struct bmpdata
     uint32_t imcolors = 0;
 };
 
-#pragma pack(push, f)
+
 #pragma pack(pop)  
 
 void bmpRead(const std::string& fileName, std::vector<unsigned char>& imData, bmpdata& header);
