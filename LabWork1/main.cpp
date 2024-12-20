@@ -6,19 +6,16 @@
 
 
 int main()
-{   
-    bmpdata header;
-    std::vector<unsigned char> imData;
-    bmpRead("1.bmp", imData, header);
-    clockwise_rotation(imData, header.width, header.height);
-    header.size = sizeof(header) + imData.size();
-    bmpWrite("clockwise_rotation.bmp", imData, header);
-    bmpRead("1.bmp", imData, header); 
-    counterclockwise_rotation(imData, header.width, header.height);
-    header.size = sizeof(header) + imData.size();
-    bmpWrite("counterclockwise_rotation.bmp", imData, header);  
-    GaussFilter(imData, header.width, header.height);
-    header.size = sizeof(header) + imData.size();
-    bmpWrite("counterclockwise_rotation_gauss.bmp", imData, header);  
+{
+    BMP bmp;
+    bmp.bmpRead("1.bmp");
+    BMP pict1 = bmp;
+    pict1.Clockwise_rotation();
+    pict1.bmpWrite("Clockwise_rotation.bmp");
+    BMP pict2 = bmp;
+    pict2.Counterclockwise_rotation();
+    pict2.bmpWrite("Counterclockwise_rotation.bmp");
+    pict2.GaussFilter();
+    pict2.bmpWrite("Gauss.bmp");
     return 0;
 }
