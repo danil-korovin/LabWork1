@@ -18,3 +18,4 @@ clean:
 	rm -f $(OBJ) $(PROJECT)
 
 .PHONY: all clean
+
