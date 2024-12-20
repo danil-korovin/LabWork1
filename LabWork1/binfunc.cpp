@@ -5,94 +5,136 @@
 #include "header.h"
 
 
-void bmpRead(const std::string& fileName, std::vector<unsigned char>& imData, bmpdata& header)
+void BMP::bmpRead(const std::string &filename)
 {
-    std::ifstream bmpfile(fileName, std::ios::binary);
-    bmpfile.read(reinterpret_cast<char*>(&header), sizeof(header));
-    int lineSize = ((header.width * header.bitCount + 31) / 8);
-    imData.resize(lineSize * header.height);
-    bmpfile.read(reinterpret_cast<char*>(imData.data()), imData.size());
+    std::ifstream bmpfile(filename.c_str(), std::ios::in | std::ios::binary);
+    bmpfile.read((char*)(sp), sizeof(sp));
+    bmpfile.read(reinterpret_cast<char*>(&Header), sizeof(BMPheader));
+    bmpfile.read(reinterpret_cast<char*>(&Info), sizeof(BMPinfo));
+    pixdata.resize(Info.height * Info.width * 3);
+    bmpfile.seekg(Header.offset, std::ios::beg);
+    for (int x = Info.height - 1; x >= 0; x--)
+    {
+        std::vector<uint8_t> arr(Info.width * 3);
+        bmpfile.read(reinterpret_cast<char*>(arr.data()), Info.width*3);
+        std::copy(arr.begin(), arr.end(), pixdata.begin() + (x * Info.width * 3));
+        int pad = (4 - (Info.width * 3) % 4) % 4;
+        bmpfile.ignore(pad);
+    }
     bmpfile.close();
 }
 
-void bmpWrite(const std::string& fileName,  const std::vector<unsigned char>& imData, const bmpdata& header)
-{
-    std::ofstream bmpfileOut(fileName, std::ios::binary);
-    bmpfileOut.write(reinterpret_cast<const char*>(&header), sizeof(header));
-    bmpfileOut.write(reinterpret_cast<const char*>(imData.data()), imData.size());
-    bmpfileOut.close();
-}
 
-void clockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height)
+void BMP::bmpWrite(const std::string &filename)
 {
-    std::vector<unsigned char> dat(imData.size());
-    for (int a = 0; a < width; ++a)
+    std::ofstream bmpfile(filename.c_str(), std::ios::out | std::ios::binary);
+    bmpfile.write((char*)(&sp), sizeof(sp));
+    bmpfile.write(reinterpret_cast<char*>(&Header), sizeof(BMPheader));
+    bmpfile.write(reinterpret_cast<char*>(&Info), sizeof(BMPinfo));
+    bmpfile.seekp(Header.offset, std::ios::beg);
+    for (int x = Info.height - 1; x >= 0; x--)
     {
-        for (int b = 0; b < height; ++b)
+        std::vector<uint8_t> arr(Info.width * 3);
+        std::copy(pixdata.begin() + (x * Info.width * 3), pixdata.begin() + ((x + 1) * Info.width * 3), arr.begin());
+        bmpfile.write(reinterpret_cast<char*>(arr.data()), Info.width*3);
+        size_t pad = ((Info.width * 3) % 4) % 4;
+        for (size_t i = 0; i < pad; i++)
         {
-            int l = (b * width + a)*3;
-            int r = ((width - a - 1) * height + b)*3;
-            for (int i = 0; i < 3; ++i)
-            {
-                dat[r + i] = imData[l + i];
-            }
-
+            bmpfile.put(0);
         }
     }
-    imData = dat;
-    std::swap(width, height);
+    bmpfile.close();
 }
 
-void counterclockwise_rotation(std::vector<unsigned char>& imData, int& width, int& height)
-{
-    std::vector<unsigned char> dat(imData.size());
-    for (int a = 0; a < width; ++a)
-    {
-        for (int b = 0; b < height; ++b)
-        {
-            int l = (b * width + a)*3;
-            int r = (a * height + (height - b - 1))*3;
-            for (int i = 0; i < 3; ++i)
-            {
-                dat[r + i] = imData[l + i];
-            }
 
+void BMP::Clockwise_rotation()
+{
+    int width2 = Info.height;
+    int height2 = Info.width;
+    std::vector<uint8_t> pixdata2(width2 * height2 * 3);
+    for (int b = 0; b < Info.height; b++)
+    {
+        for (int a = 0; a < Info.width; a++)
+        {
+            int a2 = width2 - 1 - b;
+            int b2 = a;
+            int in1 = (b * Info.width + a) * 3;
+            int in2 = (b2 * width2 + a2) * 3;
+            for (int i = 0; i < 3; i++)
+            {
+                pixdata2[in2 + i] = pixdata[in1 + i];
+            }
         }
     }
-    imData = dat;
-    std::swap(width, height);
+    Info.width = width2;
+    Info.height = height2;
+    pixdata.swap(pixdata2);
 }
 
-void GaussFilter(std::vector<unsigned char>& imData, int width, int height)
+
+void BMP::Counterclockwise_rotation()
 {
-    std::vector<unsigned char> outData(imData.size());
-    int Gauss[3][3] =
+    int width2 = Info.height;
+    int height2 = Info.width;
+    std::vector<uint8_t> pixdata2(width2 * height2 * 3);
+    for (int b = 0; b < Info.height; b++)
+    {
+        for (int a = 0; a < Info.width; a++)
+        {
+            int a2 = b;
+            int b2 = height2 - 1 - a; 
+            int in1 = (b * Info.width + a) * 3;
+            int in2 = (b2 * width2 + a2) * 3;
+            for (int i = 0; i < 3; i++)
+            {
+                pixdata2[in2 + i] = pixdata[in1 + i];
+            }
+        }
+    }
+    Info.width = width2;
+    Info.height = height2;
+    pixdata.swap(pixdata2);
+}
+         
+
+void BMP::GaussFilter()
+{
+    float gauss[3][3] =
     {
         {0, 1, 0},
         {1, 5, 1},
         {0, 1, 0}
     };
-    int Gsum = 8;
-    for (int y = 1; y < height - 1; ++y)
-    {
-        for (int x = 1; x < width - 1; ++x)
+    float sum = 9;
+    for (int i = 0; i < 3; ++i)
         {
-            int red = 0, green = 0, blue = 0;
-            for (int a = -1; a <= 1; ++a)
+            for (int j = 0; j < 3; ++j)
             {
-                for (int b = -1; b <= 1; ++b)
+                gauss[i][j] /= sum;
+            }
+        }
+    std::vector<uint8_t> pixdata2(pixdata.size());
+    for (int y = 3 / 2; y < Info.height - 3 / 2; y++)
+    {
+        for (int x = 3 / 2; x < Info.width - 3 / 2; x++)
+        {
+            float red = 0, green = 0, blue = 0;
+            for (int a = 0; a < 3; a++)
+            {
+                for (int b = 0; b < 3; b++)
                 {
-                    int pixInd = ((y + a) * width + (x + b)) * 3;
-                    red += imData[pixInd] * Gauss[a + 1][b + 1];
-                    green += imData[pixInd + 1] * Gauss[a + 1][b + 1];
-                    blue += imData[pixInd + 2] * Gauss[a + 1][b + 1];
+                    int pixelIndex = ((y + a - 3 / 2) * Info.width + (x + b - 3 / 2)) * 3;
+                    red += pixdata[pixelIndex] * gauss[a][b];
+                    green += pixdata[pixelIndex + 1] * gauss[a][b];
+                    blue += pixdata[pixelIndex + 2] * gauss[a][b];
                 }
             }
-            int outInd = (y * width + x) * 3;
-            outData[outInd] = std::min(std::max(red / Gsum, 0), 255);
-            outData[outInd + 1] = std::min(std::max(green / Gsum, 0), 255);
-            outData[outInd + 2] = std::min(std::max(blue / Gsum, 0), 255);
+            int outInd = (y * Info.width + x) * 3;
+            pixdata2[outInd] = std::min(std::max(0, static_cast<int>(red)), 255);
+            pixdata2[outInd + 1] = std::min(std::max(0, static_cast<int>(green)), 255);
+            pixdata2[outInd + 2] = std::min(std::max(0, static_cast<int>(blue)), 255);
         }
     }
-    imData = outData;
+    pixdata = pixdata2;
 }
+
