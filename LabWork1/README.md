@@ -4,7 +4,7 @@
 ## Contacts
 st128737@student.spbu.ru
 ## Description
-Bmp image "1.bmp" rotation clockwise and counterclockwise. Using the Gauss filter for a rotated image.
+Bmp image "1.bmp" rotation clockwise and counterclockwise. Using the Gauss filter for a rotated image. Parallel Programming.
 ## Build
 make -f Makefile
 ## Run 
