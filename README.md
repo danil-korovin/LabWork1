@@ -9,3 +9,7 @@ Bmp image "1.bmp" rotation clockwise and counterclockwise. Using the Gauss filte
 make -f Makefile
 ## Run 
 ./main
+## Build test
+make test
+## Run test
+./test
