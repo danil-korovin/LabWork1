@@ -1,0 +1,34 @@
+\hypertarget{md_report_autotoc_md7}{}\doxysection{Korovin Danil Pavlovich, group 24.\+B81-\/mm}\label{md_report_autotoc_md7}
+\hypertarget{md_report_autotoc_md8}{}\doxysubsection{This test is performed on image \char`\"{}1.\+bmp\char`\"{} with a size of 8.\+4 MB on a virtual machine with 4 cores.}\label{md_report_autotoc_md8}
+\hypertarget{md_report_autotoc_md9}{}\doxysubsubsection{Not parallel programming}\label{md_report_autotoc_md9}
+The previous solution did not use parallelization. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Reading time: 13 ms}
+\DoxyCodeLine{Clockwise\_rotation time: 65 ms}
+\DoxyCodeLine{Writing Clockwise\_rotation time: 10 ms}
+\DoxyCodeLine{Counterclockwise \_rotation time: 56 ms}
+\DoxyCodeLine{Writing counterclockwise\_rotation time: 10 ms}
+\DoxyCodeLine{Gauss filter time: 323 ms}
+\DoxyCodeLine{Writing Gauss filter time: 10 ms}
+\DoxyCodeLine{Total execution time: 487 ms}
+
+\end{DoxyCode}
+ \hypertarget{md_report_autotoc_md10}{}\doxysubsubsection{Parallel programming}\label{md_report_autotoc_md10}
+The new solution uses parallel programming (future objects) to perform 90 degree right and left rotations and a Gaussian filter. I do not use parallel programming for reading and writing images, because it will not gains significant performance result and may impact read and write integrity. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Reading time: 21 ms}
+\DoxyCodeLine{Clockwise\_rotation time: 33 ms}
+\DoxyCodeLine{Writing Clockwise\_rotation time: 10 ms}
+\DoxyCodeLine{Counterclockwise\_rotation time: 17 ms}
+\DoxyCodeLine{Writing counterclockwise\_rotation time: 11 ms}
+\DoxyCodeLine{Gauss filter time: 86 ms}
+\DoxyCodeLine{Writing Gauss filter time: 10 ms}
+\DoxyCodeLine{Total execution time: 188 ms}
+
+\end{DoxyCode}
+ For virtual box that has 4 cores, the parallel program runs approximately 2.\+6 times faster. For more cores, the program will run even faster. The Gaussian Filter had the biggest impact on program execution time, because the Gaussian Filter requires a relatively large amount of computation for each pixel. \hypertarget{md_report_autotoc_md11}{}\doxysubsubsection{Reasons\+:}\label{md_report_autotoc_md11}
+
+\begin{DoxyEnumerate}
+\item The parallel code splits the workload across multiple cores.
+\item Dividing the image into chunks helps the different cores work properly. 
+\end{DoxyEnumerate}
